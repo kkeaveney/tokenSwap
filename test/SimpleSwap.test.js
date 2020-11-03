@@ -84,6 +84,7 @@ contract('Truffle Assertion Tests', async (accounts) => {
     it('Deposits Weth into contract using Eth', async () => {
 
       let wethOwnerBalance, ethOwnerBalance
+      let amount = await web3.utils.toWei("1", "ether");
 
       ([ wethOwnerBalance, ethOwnerBalance] = await Promise.all([
         wethContract.methods.balanceOf(owner).call(),
@@ -91,7 +92,7 @@ contract('Truffle Assertion Tests', async (accounts) => {
       ]))
       
       await wethContract.methods.deposit().send({
-        value: 100,
+        value: amount,
         from: owner
       });
 
@@ -102,8 +103,9 @@ contract('Truffle Assertion Tests', async (accounts) => {
         web3.eth.getBalance(owner)
       ]))
 
-      newWethOwnerBalance.should.not.equal(wethOwnerBalance)
-      newEthOwnerBalance.should.not.equal(ethOwnerBalance)
+     assert.equal((wethOwnerBalance / ether) + (amount / ether), newWethOwnerBalance / ether, "Owner WETH balance should reflect tx")
+     assert.notEqual(ethOwnerBalance, newEthOwnerBalance)
+     
     })
 
     it('Transfers Weth from Owner to recipient', async () => {
