@@ -142,7 +142,8 @@ contract('Truffle Assertion Tests', async (accounts) => {
       });
 
       let newBalance = await wethContract.methods.balanceOf(swapContractAddress).call()
-      balance.should.not.equal(newBalance)
+      assert.equal((balance + deposit) / ether, newBalance / ether, "Swap WETH balance should reflect tx")
+      
 
     });
       
