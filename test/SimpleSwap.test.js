@@ -144,8 +144,7 @@ contract('Truffle Assertion Tests', async (accounts) => {
       let newBalance = await wethContract.methods.balanceOf(swapContractAddress).call()
       assert.equal((balance + deposit) / ether, newBalance / ether, "Swap WETH balance should reflect tx")
       
-
-    });
+      });
       
     it('Deposits ETH to Swap contract, Withdraws ETH', async () => {
       // Deposit ETH
@@ -153,12 +152,16 @@ contract('Truffle Assertion Tests', async (accounts) => {
       balance = await swapContract.totalBalance()
       await swapContract.send(deposit), { from: owner }
       newBalance = await swapContract.totalBalance()
-      balance.should.not.equal(newBalance)
+      
+      assert.equal((balance + deposit) / ether, newBalance / ether, "Owner ETH balance should reflect deposit tx")
       // Withdraw ETH
+
       await swapContract.withdrawETH(1), { from: owner }
       newBalance = await swapContract.totalBalance()
-      newBalance.should.not.equal(balance)
-            
+      assert.equal((balance + deposit) / ether, newBalance / ether, "Owner ETH balance should reflect withdrawal tx")
+      console.log((balance + deposit) / ether)
+      console.log(newBalance / ether)
+
       });
     })
 
