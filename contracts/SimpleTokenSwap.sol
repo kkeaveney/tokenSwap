@@ -28,6 +28,8 @@ contract SimpleTokenSwap {
     // Creator of this contract.
     address public owner;
 
+    mapping(address => uint) public balanceOf;
+
     constructor(IWETH weth) {
         WETH = weth;
         owner = msg.sender;
@@ -38,6 +40,7 @@ contract SimpleTokenSwap {
         _;
     }
 
+
     // Payable fallback to allow this contract to receive protocol fee refunds.
     receive() external payable {}
 
@@ -47,6 +50,7 @@ contract SimpleTokenSwap {
         onlyOwner
     {
         require(token.transfer(msg.sender, amount));
+        
     }
 
     // Transfer ETH held by this contrat to the sender/owner.
@@ -55,14 +59,19 @@ contract SimpleTokenSwap {
         onlyOwner
     {
         msg.sender.transfer(amount);
+        
     }
-
+  
     // Transfer ETH into this contract and wrap it into WETH.
     function depositETH()
         external
         payable
     {
         WETH.deposit{value: msg.value}();
+    }
+
+    function totalBalance() public view returns (uint) {
+        return address(this).balance;
     }
 
     // Swaps ERC20->ERC20 tokens held by this contract using a 0x-API quote.

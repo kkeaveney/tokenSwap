@@ -17,8 +17,7 @@ contract('Truffle Assertion Tests', async (accounts) => {
     const owner = accounts[0]
     const wethHolder = "0x397ff1542f962076d0bfe58ea045ffa2d347aca0"
     const daiHolder = "0x648148a0063b9d43859d9801f2bf9bb768e22142";
-    let ownerBalance
-    let wethHolderEthBalance
+    const ether = 10**18; // 1 ether = 1000000000000000000 wei
     let swapContractAddress
 
     beforeEach(async () => {
@@ -123,16 +122,33 @@ contract('Truffle Assertion Tests', async (accounts) => {
       
     })
 
-    it('Deposits Eth to Swap contract', async () => {
-      let balance = await wethContract.methods.balanceOf(owner).call()
-      console.log('Owner Weth balance', balance)
-
-        await swapContract.depositETH({
-            value: 5000000000000,
+    it('Deposits ETH to Swap contract, Wrapped into WETH', async () => {
+      let deposit = 1 * ether;
+      let balance = await wethContract.methods.balanceOf(swapContractAddress).call()
+      
+      await swapContract.depositETH({
+            value: deposit,
             from: owner,
       });
-      balance = await wethContract.methods.balanceOf(swapContractAddress).call()
-      console.log('Swap Weth balance', balance)
+
+      let newBalance = await wethContract.methods.balanceOf(swapContractAddress).call()
+      balance.should.not.equal(newBalance)
+
+    });
+      
+    it('Deposits ETH to Swap contract, Withdraws ETH', async () => {
+      // Deposit ETH
+      let deposit = 1 * ether;
+      balance = await swapContract.totalBalance()
+      await swapContract.send(deposit), { from: owner }
+      newBalance = await swapContract.totalBalance()
+      balance.should.not.equal(newBalance)
+      // Withdraw ETH
+      await swapContract.withdrawETH(1), { from: owner }
+      newBalance = await swapContract.totalBalance()
+      newBalance.should.not.equal(balance)
+            
+      });
     })
 
-  })
+    
