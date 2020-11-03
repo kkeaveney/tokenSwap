@@ -19,6 +19,7 @@ contract('Truffle Assertion Tests', async (accounts) => {
     const daiHolder = "0x648148a0063b9d43859d9801f2bf9bb768e22142";
     const ether = 10**18; // 1 ether = 1000000000000000000 wei
     let swapContractAddress
+  
 
     beforeEach(async () => {
 
@@ -36,31 +37,35 @@ contract('Truffle Assertion Tests', async (accounts) => {
     
     it('Confirms the contract name', async () => {
       const result = await swapContract.name()
-      result.should.equal(name)
+      assert.equal(result, name, "Contract name is incorrect")
+      
     })
 
     it(`Demonstrates the caller is the contract owner`, async () => {
         
       const result = await swapContract.owner()
-      result.should.equal(owner)
+      assert.equal(result, owner, "Caller is not the contract owner")
       });
 
     it('Confirms the deployed WETH address', async () => {
       const result = await swapContract.WETH()
-      result.should.equal(wethAddress)
+      assert.equal(result, wethAddress, "The WETH address should be passed to the contract constructor")
     })
 
     it('Transfers Dai from Dai holder to recipient', async () => {
     
     let daiHolderBalance, recipientBalance;
+    let amount = await web3.utils.toWei("1", "ether");
+   
 
     ([ daiHolderBalance, recipientBalance] = await Promise.all([
       daiContract.methods.balanceOf(daiHolder).call(),
       daiContract.methods.balanceOf(owner).call()
     ]))
 
+
      await daiContract.methods
-    .transfer(owner, 1000)
+    .transfer(owner, amount)
     .send({from: daiHolder});
 
     
@@ -71,6 +76,8 @@ contract('Truffle Assertion Tests', async (accounts) => {
 
     daiHolderBalance.should.not.equal(newDaiHolderBalance)
     recipientBalance.should.not.equal(newRecipientBalance)
+    assert.equal(daiHolderBalance / ether, (newDaiHolderBalance / ether) + (amount / ether), "Dai holder balance should reflect tx")
+   
 
    })
 
