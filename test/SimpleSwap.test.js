@@ -1,5 +1,5 @@
 let SwapContract = artifacts.require("SimpleTokenSwap")
-//const { abi: ERC20_ABI } = require('../build/contracts/IERC20.json');
+const { createWeb3, createQueryString, etherToWei, waitForTxSuccess, weiToEther } = require('../src/utils');
 const wethABI  = require('../build/contracts/abis/wethABI.json')
 const daiABI = require('../build/contracts/abis/daiABI.json')
 
@@ -17,8 +17,9 @@ contract('Truffle Assertion Tests', async (accounts) => {
     const owner = accounts[0]
     const wethHolder = "0x397ff1542f962076d0bfe58ea045ffa2d347aca0"
     const daiHolder = "0x648148a0063b9d43859d9801f2bf9bb768e22142";
-    const ether = 10**18; // 1 ether = 1000000000000000000 wei
+    const ether = 10**18;  // 1 ether = 1000000000000000000 wei
     let swapContractAddress
+    const API_QUOTE_URL = 'https://api.0x.org/swap/v1/quote';
   
 
     beforeEach(async () => {
@@ -26,10 +27,8 @@ contract('Truffle Assertion Tests', async (accounts) => {
     wethContract = new web3.eth.Contract(wethABI, wethAddress)
     daiContract = new web3.eth.Contract(daiABI, daiAddress)
     swapContract = await SwapContract.new(wethAddress)
-
     ownerBalance = await web3.eth.getBalance(owner)
     wethHolderEthBalance = await web3.eth.getBalance(wethHolder)
-    
     swapContractAddress = swapContract.address
     
      
@@ -154,15 +153,31 @@ contract('Truffle Assertion Tests', async (accounts) => {
       newBalance = await swapContract.totalBalance()
       
       assert.equal((balance + deposit) / ether, newBalance / ether, "Owner ETH balance should reflect deposit tx")
+      
       // Withdraw ETH
-
       await swapContract.withdrawETH(1), { from: owner }
       newBalance = await swapContract.totalBalance()
       assert.equal((balance + deposit) / ether, newBalance / ether, "Owner ETH balance should reflect withdrawal tx")
-      console.log((balance + deposit) / ether)
-      console.log(newBalance / ether)
-
+      
       });
+    })
+
+    it('Fetches quote from 0x API', async () => {
+      const sellAmount = 0.1
+      let deposit = 1 * ether;
+
+      // Deposit Eth into Contract
+      await swapContract.depositETH({
+            value: deposit,
+            from: owner,
+      });
+      console.info(`Fetching swap quote from 0x-API to sell ${sellAmount} WETH for DAI...`);
+      const qs = createQueryString({
+        sellToken: 'WETH',
+        buyToken: 'DAI',
+        sellAmount: sellAmountWei
+      })
+
     })
 
     
