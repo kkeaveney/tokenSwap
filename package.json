@@ -6,7 +6,7 @@
     "scripts": {
         "postinstall": "truffle compile",
         "start-fork": "ganache-cli -m \"${npm_package_config_mnemonic}\" -f ${RPC_URL} -i 1 -p 7545",
-        "start-fork-unlocked": "ganache-cli -m \"${npm_package_config_mnemonic}\" -f ${RPC_URL} -p 7545 -i 1 --unlock 0x397ff1542f962076d0bfe58ea045ffa2d347aca0 0xa0063b9d43859d9801f2bf9bb768e22142",
+        "start-fork-unlocked": "ganache-cli -m \"${npm_package_config_mnemonic}\" -f ${RPC_URL} -i 1 -p 7545 -u \"${npm_package_config_WETH_HOLDER}\" -u \"${npm_package_config_DAI_HOLDER}\"",
         "print-hd-wallet-accounts": "MNEMONIC=\"${npm_package_config_mnemonic}\" node src/print-hd-wallet-accounts.js",
         "compile": "truffle compile",
         "deploy-live": "MNEMONIC=\"${npm_package_config_mnemonic}\" truffle migrate -f 2",
@@ -17,8 +17,10 @@
         "swap-contract-fork": "MNEMONIC=\"${npm_package_config_mnemonic}\" RPC_URL=http://localhost:7545 FORKED=1 node src/swap-contract.js \"${npm_package_config_forked_deployed_address}\""
     },
     "config": {
+        "DAI_HOLDER":"0x648148a0063b9d43859d9801f2bf9bb768e22142",
+        "WETH_HOLDER":"0x397ff1542f962076d0bfe58ea045ffa2d347aca0",
         "mnemonic": "myth like bonus scare over problem client lizard pioneer submit female collect",
-        "forked_deployed_address": "0xcaF2c0f2552005F5cBAD44A5682C465A15B7D0fD"
+        "forked_deployed_address": "0x084fEA16fF0E997a721194cE2e107ADDf918aDC8"
     },
     "dependencies": {
         "@truffle/hdwallet-provider": "^1.1.0",

@@ -5,6 +5,7 @@ const daiABI = require('../build/contracts/abis/daiABI.json')
 const assert = require("chai").assert;
 const truffleAssert = require('truffle-assertions');
 const fetch = require('node-fetch');
+
 require('chai')
   .use(require('chai-as-promised'))
   .should()
