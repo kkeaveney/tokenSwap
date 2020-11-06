@@ -1,6 +1,5 @@
 'use strict'
 require('colors');
-var abi = require('human-standard-token-abi')
 const BigNumber = require('bignumber.js');
 const fetch = require('node-fetch');
 const process = require('process');
@@ -59,32 +58,24 @@ require('yargs')
     .argv;
 
 async function run(argv) {
-
-    
-
-
     const web3 = createWeb3();
     const [taker] = await web3.eth.getAccounts();
-    const wethContract = new web3.eth.Contract(abi, argv.weth);
-    const daiContract = new web3.eth.Contract(abi, argv.dai);
-
-    
-    
+    const weth = new web3.eth.Contract(WETH_ABI, argv.weth);
+    const dai = new web3.eth.Contract(ERC20_ABI, argv.dai);
 
     // Convert sellAmount from token units to wei.
     const sellAmountWei = etherToWei(argv.sellAmount);
 
-    //console.log(await weth.methods.balanceOf(taker).call())
-
     // Mint some WETH using ETH.
     console.info(`Minting ${argv.sellAmount} WETH...`);
+    console.log('Taker Balance', await web3.eth.getBalance(taker))
     await waitForTxSuccess(weth.methods.deposit().send({
         value: sellAmountWei,
         from: taker,
     }));
 
     // Track our DAI balance.
-    //const daiStartingBalance = await dai.methods.balanceOf(taker).call();
+    const daiStartingBalance = await dai.methods.balanceOf(taker).call();
 
     // Get a quote from 0x-API to sell the WETH we just minted.
     console.info(`Fetching swap quote from 0x-API to sell ${argv.sellAmount} WETH for DAI...`);
@@ -99,7 +90,7 @@ async function run(argv) {
     console.info(`Fetching quote ${quoteUrl.bold}...`);
     const response = await fetch(quoteUrl);
     const quote = await response.json();
-    console.info(`Received a quote with price ${quote.to}`);
+    console.info(`Received a quote with price ${quote.price}`);
 
     // Grant the allowance target an allowance to spend our WETH.
     await waitForTxSuccess(
@@ -121,7 +112,7 @@ async function run(argv) {
         // 0x-API cannot estimate gas in forked mode.
         ...(FORKED ? {} : { gas : quote.gas }),
     }));
-  
+
     // Detect balances changes.
     const boughtAmount = weiToEther(
         new BigNumber(await dai.methods.balanceOf(taker).call())

@@ -1,5 +1,3 @@
-![alt text](/banner.png "Get started with 0x API")
-
 # Get started with 0x API
 
 This is a repo containing toy examples of filling 0x-API quotes either directly with web3 or through a smart contract.
@@ -27,6 +25,11 @@ The examples can be run locally (without actually mining transactions) through t
 
 ```bash
 RPC_URL=ETHEREUM_RPC_URL npm run start-fork
+
+unlock DAI and WETH holders 
+
+RPC_URL=ETHEREUM_RPC_URL npm run start-fork-unlocked 
+
 ```
 
 #### Direct swap

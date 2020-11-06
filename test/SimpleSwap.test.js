@@ -2,9 +2,9 @@ let SwapContract = artifacts.require("SimpleTokenSwap")
 const { createWeb3, createQueryString, etherToWei, waitForTxSuccess, weiToEther } = require('../src/utils');
 const wethABI  = require('../build/contracts/abis/wethABI.json')
 const daiABI = require('../build/contracts/abis/daiABI.json')
-
 const assert = require("chai").assert;
 const truffleAssert = require('truffle-assertions');
+const fetch = require('node-fetch');
 require('chai')
   .use(require('chai-as-promised'))
   .should()
@@ -15,6 +15,7 @@ contract('Truffle Assertion Tests', async (accounts) => {
     const daiAddress = "0x6B175474E89094C44Da98b954EedeAC495271d0F"
     const name = "SimpleTokenSwap"
     const owner = accounts[0]
+    const taker = accounts[1]
     const wethHolder = "0x397ff1542f962076d0bfe58ea045ffa2d347aca0"
     const daiHolder = "0x648148a0063b9d43859d9801f2bf9bb768e22142";
     const ether = 10**18;  // 1 ether = 1000000000000000000 wei
@@ -160,23 +161,33 @@ contract('Truffle Assertion Tests', async (accounts) => {
       assert.equal((balance + deposit) / ether, newBalance / ether, "Owner ETH balance should reflect withdrawal tx")
       
       });
-    })
 
-    it('Fetches quote from 0x API', async () => {
-      const sellAmount = 0.1
-      let deposit = 1 * ether;
+      it('Fetches quote from 0x API', async () => {
+        const sellAmount = 0.1
+        let deposit = 10 * ether;
+        const sellAmountWei = etherToWei(sellAmount);
+  
+        // Deposit Eth into Contract
+        await swapContract.depositETH({
+              value: deposit,
+              from: owner,
+        });
+        console.info(`Fetching swap quote from 0x-API to sell ${sellAmount} WETH for DAI...`);
+        const qs = createQueryString({
+          sellToken: 'WETH',
+          buyToken: 'DAI',
+          sellAmount: sellAmountWei,
+          takerAddress: taker
+        })
+        //const quoteURL = `${API_QUOTE_URL}?${qs}`
+        const quoteURL = 'https://api.0x.org/swap/v1/quote?buyToken=DAI&sellToken=WETH&sellAmount=100000000000000000'
+        console.info(`Fetching quote ${quoteURL.bold}...`)
+        const response = await fetch(quoteURL)
+        const quote = await response.json()
+        console.info(`Received a quote with a price ${quote}`)
+        })
 
-      // Deposit Eth into Contract
-      await swapContract.depositETH({
-            value: deposit,
-            from: owner,
-      });
-      console.info(`Fetching swap quote from 0x-API to sell ${sellAmount} WETH for DAI...`);
-      const qs = createQueryString({
-        sellToken: 'WETH',
-        buyToken: 'DAI',
-        sellAmount: sellAmountWei
-      })
+    
 
     })
 
