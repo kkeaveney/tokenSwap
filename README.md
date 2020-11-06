@@ -26,7 +26,7 @@ The examples can be run locally (without actually mining transactions) through t
 ```bash
 RPC_URL=ETHEREUM_RPC_URL npm run start-fork
 
-unlock DAI and WETH holders 
+# unlock DAI and WETH holder accounts
 
 RPC_URL=ETHEREUM_RPC_URL npm run start-fork-unlocked 
 
@@ -80,7 +80,3 @@ RPC_URL=ETHEREUM_RPC_URL npm run swap-contract-live -a 0.1 CONTRACT_ADDRESS
 
 Keep in mind that tokens will remain in the contract after the swap and can only be retrieved by your first HD wallet account through `withdrawToken()` or `withdrawETH()`.
 
-## Need help?
-* Refer to our [0x API specification](https://0x.org/docs/api) for detailed documentation.
-* 0x API is open source! Look through the [codebase](https://github.com/0xProject/0x-api) and deploy your own 0x API instance.
-* Don’t hesitate to reach out on [Discord](https://discordapp.com/invite/d3FTX3M) for help! The 0x Core team is active on Discord to help teams building with all things 0x.
