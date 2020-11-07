@@ -5,6 +5,8 @@ const daiABI = require('../build/contracts/abis/daiABI.json')
 const assert = require("chai").assert;
 const truffleAssert = require('truffle-assertions');
 const fetch = require('node-fetch');
+const PACKAGE_CONFIG = require('../package.json');
+const deployed_address =  PACKAGE_CONFIG.config.forked_deployed_address
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -178,18 +180,19 @@ contract('Truffle Assertion Tests', async (accounts) => {
           sellToken: 'WETH',
           buyToken: 'DAI',
           sellAmount: sellAmountWei,
-          takerAddress: taker
+          //takerAddress: taker
         })
-        //const quoteURL = `${API_QUOTE_URL}?${qs}`
-        const quoteURL = 'https://api.0x.org/swap/v1/quote?buyToken=DAI&sellToken=WETH&sellAmount=100000000000000000'
-        console.info(`Fetching quote ${quoteURL.bold}...`)
-        const response = await fetch(quoteURL)
-        const quote = await response.json()
-        console.info(`Received a quote with a price ${quote}`)
+        const quoteUrl = `${API_QUOTE_URL}?${qs}`;
+        console.info(`Fetching quote ${quoteUrl.bold}...`);
+        const response = await fetch(quoteUrl);
+        const quote = await response.json();
+        console.info(`Received a quote with price ${quote.price}`);
+
+        // Have the contract fill the quote, selling its own WETH.
+        console.info(`Filling the quote through the contract at ${deployed_address.bold}...`);
+        
         })
-
-    
-
     })
-
     
+
+  

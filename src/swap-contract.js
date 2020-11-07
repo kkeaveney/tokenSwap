@@ -86,7 +86,9 @@ async function run(argv) {
             value: quote.value,
             gasPrice: quote.gasPrice,
         }));
+   
     const boughtAmount = weiToEther(receipt.events.BoughtTokens.returnValues.boughtAmount);
     console.info(`${'✔'.bold.green} Successfully sold ${argv.sellAmount.toString().bold} WETH for ${boughtAmount.bold.green} DAI!`);
     // The contract now has `boughtAmount` of DAI!
 }
+

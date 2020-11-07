@@ -17,10 +17,10 @@
         "swap-contract-fork": "MNEMONIC=\"${npm_package_config_mnemonic}\" RPC_URL=http://localhost:7545 FORKED=1 node src/swap-contract.js \"${npm_package_config_forked_deployed_address}\""
     },
     "config": {
-        "DAI_HOLDER":"0x648148a0063b9d43859d9801f2bf9bb768e22142",
-        "WETH_HOLDER":"0x397ff1542f962076d0bfe58ea045ffa2d347aca0",
+        "DAI_HOLDER": "0x648148a0063b9d43859d9801f2bf9bb768e22142",
+        "WETH_HOLDER": "0x397ff1542f962076d0bfe58ea045ffa2d347aca0",
         "mnemonic": "myth like bonus scare over problem client lizard pioneer submit female collect",
-        "forked_deployed_address": "0x084fEA16fF0E997a721194cE2e107ADDf918aDC8"
+        "forked_deployed_address": "0x507AA6185BcBFe620aED73c8EfE4DB04B0bF81A5"
     },
     "dependencies": {
         "@truffle/hdwallet-provider": "^1.1.0",
