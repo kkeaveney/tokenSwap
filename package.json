@@ -6,7 +6,7 @@
     "scripts": {
         "postinstall": "truffle compile",
         "start-fork": "ganache-cli -m \"${npm_package_config_mnemonic}\" -f ${RPC_URL} -i 1 -p 7545",
-        "start-fork-unlocked": "ganache-cli -m \"${npm_package_config_mnemonic}\" -f ${RPC_URL} -i 1 -p 7545 -u \"${npm_package_config_WETH_HOLDER}\" -u \"${npm_package_config_DAI_HOLDER}\"",
+        "start-fork-unlocked": "ganache-cli -m \"${npm_package_config_mnemonic}\" -f ${RPC_URL} -e 1000 -i 1 -p 7545 -u \"${npm_package_config_WETH_HOLDER}\" -u \"${npm_package_config_DAI_HOLDER}\"",
         "print-hd-wallet-accounts": "MNEMONIC=\"${npm_package_config_mnemonic}\" node src/print-hd-wallet-accounts.js",
         "compile": "truffle compile",
         "deploy-live": "MNEMONIC=\"${npm_package_config_mnemonic}\" truffle migrate -f 2",

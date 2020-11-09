@@ -187,12 +187,19 @@ contract('Truffle Assertion Tests', async (accounts) => {
         const response = await fetch(quoteUrl);
         const quote = await response.json();
         console.info(`Received a quote with price ${quote.price}`);
+        
 
         // Have the contract fill the quote, selling its own WETH.
-        console.info(`Filling the quote through the contract at ${deployed_address.bold}...`);
-        
+        console.info(`Filling the quote through the contract at ${swapContractAddress.bold}...`);
+        const receipt = await waitForTxSuccess(swapContract.fillQuote(
+          quote.sellTokenAddress,
+          quote.buyTokenAddress,
+          quote.allowanceTarget,
+          quote.to,
+          quote.data,
+          { from: owner,
+          value: quote.value,
+          gasPrice: quote.gasPrice, }));
         })
-    })
     
-
-  
+})

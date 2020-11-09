@@ -43,6 +43,7 @@ contract SimpleTokenSwap {
 
     // Payable fallback to allow this contract to receive protocol fee refunds.
     receive() external payable {}
+    
 
     // Transfer tokens held by this contrat to the sender/owner.
     function withdrawToken(IERC20 token, uint256 amount)
@@ -109,4 +110,6 @@ contract SimpleTokenSwap {
         boughtAmount = buyToken.balanceOf(address(this)) - boughtAmount;
         emit BoughtTokens(sellToken, buyToken, boughtAmount);
     }
+
+    
 }
