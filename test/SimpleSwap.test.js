@@ -1,12 +1,10 @@
 let SwapContract = artifacts.require("SimpleTokenSwap")
-const { createWeb3, createQueryString, etherToWei, waitForTxSuccess, weiToEther } = require('../src/utils');
+const { createQueryString, etherToWei, waitForTxSuccess, weiToEther } = require('../src/utils');
 const wethABI  = require('../build/contracts/abis/wethABI.json')
 const daiABI = require('../build/contracts/abis/daiABI.json')
 const assert = require("chai").assert;
-const truffleAssert = require('truffle-assertions');
 const fetch = require('node-fetch');
-const PACKAGE_CONFIG = require('../package.json');
-const deployed_address =  PACKAGE_CONFIG.config.forked_deployed_address
+
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -18,7 +16,6 @@ contract('Truffle Assertion Tests', async (accounts) => {
     const daiAddress = "0x6B175474E89094C44Da98b954EedeAC495271d0F"
     const name = "SimpleTokenSwap"
     const owner = accounts[0]
-    const taker = accounts[1]
     const wethHolder = "0x397ff1542f962076d0bfe58ea045ffa2d347aca0"
     const daiHolder = "0x648148a0063b9d43859d9801f2bf9bb768e22142";
     const ether = 10**18;  // 1 ether = 1000000000000000000 wei
@@ -165,8 +162,8 @@ contract('Truffle Assertion Tests', async (accounts) => {
       
       });
 
-      it('Fetches quote from 0x API', async () => {
-        const sellAmount = 0.1
+    it('Fetches quote from 0x API, emits a BoughtTokens event', async () => {
+        const sellAmount = 1
         let deposit = 10 * ether;
         const sellAmountWei = etherToWei(sellAmount);
   
@@ -200,6 +197,26 @@ contract('Truffle Assertion Tests', async (accounts) => {
           { from: owner,
           value: quote.value,
           gasPrice: quote.gasPrice, }));
+
+        const log = receipt.logs[0]
+        log.event.should.eq('BoughtTokens')
+        const event = log.args
+        
+        event.sellToken.should.equal(web3.utils.toChecksumAddress(quote.sellTokenAddress), 'Incorrect sell Token address')
+        event.buyToken.should.equal(web3.utils.toChecksumAddress(quote.buyTokenAddress), 'Incorrect buy Token address')
+        
+        const boughtAmount = weiToEther(event.boughtAmount)
+        const transactionPrice = boughtAmount / sellAmount
+        console.log('Quote guaranteed price', quote.guaranteedPrice)
+        console.log('Transaction price', transactionPrice)
+
+        event.boughtAmount.should.be.greaterThan(1, 'Incorrect bought amount')
+        
+        console.info(`${'✔'.bold.green} Successfully sold ${sellAmount.toString().bold} WETH for ${boughtAmount.toString().bold.green} DAI!`);
+        //The contract now has `boughtAmount` of DAI!
         })
-    
-})
+
+  })
+
+        
+        
