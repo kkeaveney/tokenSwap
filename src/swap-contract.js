@@ -71,7 +71,7 @@ async function run(argv) {
     const response = await fetch(quoteUrl);
     const quote = await response.json();
     console.info(`Received a quote with price ${quote.price}`);
-
+    console.log(quote)
     // Have the contract fill the quote, selling its own WETH.
     console.info(`Filling the quote through the contract at ${argv.deployedAddress.bold}...`);
     
@@ -86,7 +86,7 @@ async function run(argv) {
             value: quote.value,
             gasPrice: quote.gasPrice,
         }));
-   
+    
     const boughtAmount = weiToEther(receipt.events.BoughtTokens.returnValues.boughtAmount);
     console.info(`${'✔'.bold.green} Successfully sold ${argv.sellAmount.toString().bold} WETH for ${boughtAmount.bold.green} DAI!`);
     // The contract now has `boughtAmount` of DAI!
