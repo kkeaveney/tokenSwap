@@ -111,5 +111,5 @@ contract SimpleTokenSwap {
         emit BoughtTokens(sellToken, buyToken, boughtAmount);
     }
 
-    
+        
 }
