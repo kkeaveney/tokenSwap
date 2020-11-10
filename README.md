@@ -15,9 +15,9 @@ This will also compile the contracts in `contracts/` and produce artifacts in `b
 ## Tests
 
 The following test script is included, test\SimpleSwap.test.js. 
-
+```bash
 Run this using mocha, 'truffle test test\SimpleSwap.test.js
-
+```
 
 ## Examples
 The following example scripts are included:
