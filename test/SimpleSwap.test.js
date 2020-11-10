@@ -7,6 +7,7 @@ const fetch = require('node-fetch');
 
 require('chai')
   .use(require('chai-as-promised'))
+  .use(require('chai-bignumber')())
   .should()
 
 
@@ -167,7 +168,7 @@ contract('Truffle Assertion Tests', (accounts) => {
                 value: deposit,
                 from: owner,
           });
-          console.info(`Fetching swap quote from 0x-API to sell ${sellAmount} WETH for DAI...`);
+          // Fetching swap quote from 0x-API to sell ${sellAmount} WETH for DAI...`);
           const qs = createQueryString({
             sellToken: 'WETH',
             buyToken: 'DAI',
@@ -175,14 +176,10 @@ contract('Truffle Assertion Tests', (accounts) => {
             //takerAddress: taker
           })
           const quoteUrl = `${API_QUOTE_URL}?${qs}`;
-          console.info(`Fetching quote ${quoteUrl.bold}...`);
           const response = await fetch(quoteUrl);
           const quote = await response.json();
-          console.info(`Received a quote with price ${quote.price}`);
           
-  
           // Have the contract fill the quote, selling its own WETH.
-          console.info(`Filling the quote through the contract at ${swapContractAddress.bold}...`);
           const receipt = await waitForTxSuccess(swapContract.fillQuote(
             quote.sellTokenAddress,
             quote.buyTokenAddress,
@@ -201,13 +198,11 @@ contract('Truffle Assertion Tests', (accounts) => {
           event.buyToken.should.equal(web3.utils.toChecksumAddress(quote.buyTokenAddress), 'Incorrect buy Token address')
           
           const boughtAmount = weiToEther(event.boughtAmount)
-          const transactionPrice = boughtAmount / sellAmount
-          console.log('Quote guaranteed price', quote.guaranteedPrice)
-          console.log('Transaction price', transactionPrice)
-  
-          //event.boughtAmount.should.be.greaterThan(1, 'Incorrect bought amount')
+          const transactionPrice = (boughtAmount / sellAmount)
           
-          console.info(`${'✔'.bold.green} Successfully sold ${sellAmount.toString().bold} WETH for ${boughtAmount.toString().bold.green} DAI!`);
+          transactionPrice.should.be.bignumber.greaterThan(quote.guaranteedPrice, 'Incorrect bought amount')
+          
+          //console.info(`${'✔'.bold.green} Successfully sold ${sellAmount.toString().bold} WETH for ${boughtAmount.toString().bold.green} DAI!`);
           //The contract now has `boughtAmount` of DAI!
           })
       })
