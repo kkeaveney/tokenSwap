@@ -1,4 +1,4 @@
-# Get started with 0x API
+# 0x API
 
 This is a repo containing toy examples of filling 0x-API quotes either directly with web3 or through a smart contract.
 
